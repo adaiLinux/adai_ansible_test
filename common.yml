@@ -1,0 +1,5 @@
+---
+- hosts: test
+  gather_facts: False
+  roles:
+    - role: common
