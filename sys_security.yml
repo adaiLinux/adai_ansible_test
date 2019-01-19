@@ -1,0 +1,6 @@
+# 等保3系统合规配置
+---
+- hosts: all
+  gather_facts: False
+  roles:
+    - { role: sys_security }

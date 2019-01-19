@@ -1,0 +1,4 @@
+---
+maven_setting: '/etc/maven/settings.xml'
+maven_username: 'adai'
+maven_password: 'adai123'

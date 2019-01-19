@@ -1,0 +1,6 @@
+# 设置所有的dns
+---
+- hosts: all
+  gather_facts: False
+  roles:
+    - role: maven

@@ -1,0 +1,20 @@
+[default]
+log_file={{ mysqld_run_dir }}/mymon.log
+# Panic 0
+# Fatal 1
+# Error 2
+# Warn 3
+# Info 4
+# Debug 5
+log_level=2
+
+falcon_client=http://127.0.0.1:1988/v1/push
+
+#自定义endpoint
+endpoint=host2
+
+[mysql]
+user=mymon
+password={{ mymon_password }}
+host={{ inventory_hostname }}
+port={{ mysqld_port }}

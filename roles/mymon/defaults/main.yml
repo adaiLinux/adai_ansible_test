@@ -1,0 +1,5 @@
+mymon_dir: "/home/falcon/scripts"
+mysqld_run_dir: "/var/lib/mysql"
+mysqld_port: "3306"
+mymon_password: ''
+

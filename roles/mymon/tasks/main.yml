@@ -1,0 +1,62 @@
+---
+
+#yum安装golang
+- name: Install golang
+  yum: name=golang.x86_64
+
+#- name: Export $GOPATH
+#  shell: "echo $GOPATH"
+#  environment:
+#    GOPATH: $HOME
+
+#设置GOPATH
+- name: echo 'export GOPATH=$HOME' >> /etc/profile
+  lineinfile:
+    dest=/etc/profile
+    line="export GOPATH=$HOME"
+
+#创建mymon目录
+- name: mkdir -p $GOPATH/src/github.com/open-falcon
+  file: path=/root/src/github.com/open-falcon state=directory
+
+#- name: go get mymon
+#  command: go get -u github.com/open-falcon/mymon
+
+#- name: Export GOPATH
+#  command: export GOPATH=$HOME
+
+#克隆代码
+- name: git clone https://github.com/open-falcon/mymon.git
+  git: accept_hostkey=yes repo=https://github.com/open-falcon/mymon.git dest=/root/src/github.com/open-falcon/mymon
+
+
+- name: go get ./...
+  command: "go get ./... chdir=/root/src/github.com/open-falcon/mymon"
+
+- name: go build mymon
+  command: "go build -o mymon chdir=/root/src/github.com/open-falcon/mymon"
+
+#- name: make mymon
+#  command: "make chdir=/root/src/github.com/open-falcon/mymon"
+#- name: go get ./... && go build mymon
+#  command: "cd /root/src/github.com/open-falcon/mymon ; make"
+
+# 部署单实例数据库mymon监控使用
+- name: Generate mymon cfg file
+  tags: ['mymon', 'single']
+  template: src=mymon.cfg.j2 dest={{ mysqld_run_dir }}/mymon.cfg
+
+- name: Generate mymon_control.sh
+  tags: ['mymon']
+  copy: src=mymon_control.sh dest={{ mymon_dir }}/mymon_control.sh mode=0755 owner=falcon group=falcon
+
+- name: Move mymon to /home/mysql/
+  copy: src=/root/src/github.com/open-falcon/mymon/mymon dest=/home/falcon/scripts/ mode=0755
+   
+- name: Generate mymon cron
+  tags: ['mymon']
+  template: src=mymon.cron.j2 dest=/etc/cron.d/mymon
+
+
+
+

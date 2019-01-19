@@ -1,0 +1,16 @@
+---
+- name: install oracle jdk
+  yum: name=java-1.8.0-openjdk
+
+- name: install maven
+  yum: name=maven
+
+- name: Copy maven
+  template: src=settings.xml dest={{ maven_setting }}
+
+- name: Set JAVA_HOME
+  lineinfile:
+    dest=/etc/profile
+    regexp='^export JAVA_HOME'
+    line="export JAVA_HOME=/usr/java/latest"
+    state=present

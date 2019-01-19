@@ -1,0 +1,12 @@
+#---
+#rpc_proxy_use_unixsocket: False
+
+#uwsgi_socket_list:
+#    - name: project_name
+#      socket: '/home/adai/workspace/project_name/log/uwsgi_stats.socket'
+
+#uwsgi_socket_list:
+#    - name: project1_name
+#      socket: '/tmp/stats_project1_name.socket'
+#    - name: project2_name
+#      socket: '/tmp/stats_project1_nam2.socket'

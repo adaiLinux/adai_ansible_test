@@ -1,0 +1,102 @@
+---
+# 等保合规处理
+# pamd module 要求ansible版本 ≥ 2.3
+- name: Insert a new rule pam_wheel.so with argument 'use_uid' after an existing rule pam_rootok.so in /etc/pam.d/su
+  pamd:
+    name: su
+    type: auth
+    control: sufficient
+    module_path: pam_rootok.so
+    new_type: auth
+    new_control: required
+    new_module_path: pam_wheel.so
+    module_arguments: 'use_uid'
+    state: after
+
+- name: Insert a new rule pam_cracklib.so before an existing rule pam_unix.so in /etc/pam.d/system-auth
+  pamd:
+    name: system-auth
+    type: password
+    control: sufficient
+    module_path: pam_unix.so
+    new_type: password
+    new_control: required
+    new_module_path: pam_cracklib.so
+    module_arguments:
+        try_first_pass
+        retry=3
+        minlen=14
+        dcredit=-1
+        ucredit=-1
+        ocredit=-1
+        lcredit=-1
+    state: before
+
+- name: Insert a new rule pam_cracklib.so before an existing rule pam_unix.so in /etc/pam.d/password-auth
+  pamd:
+    name: password-auth
+    type: password
+    control: sufficient
+    module_path: pam_unix.so
+    new_type: password
+    new_control: required
+    new_module_path: pam_cracklib.so
+    module_arguments:
+        try_first_pass
+        retry=3
+        minlen=14
+        dcredit=-1
+        ucredit=-1
+        ocredit=-1
+        lcredit=-1
+    state: before
+
+- name: Insert a new rule pam_tally2.so before an existing rule pam_securetty.so in /etc/pam.d/login
+  pamd:
+    name: login
+    type: auth
+    control: '[user_unknown=ignore success=ok ignore=ignore default=bad]'
+    module_path: pam_securetty.so
+    new_type: auth
+    new_control: required
+    new_module_path: pam_tally2.so
+    module_arguments:
+        deny=3
+        unlock_time=300
+        even_deny_root
+        root_unlock_time=10
+    state: before
+
+- name: Copy file to /etc/ssh
+  copy:
+    src: ssh/sshd_config
+    dest: /etc/ssh
+    owner: root
+    group: root
+    mode: 644
+  validate: /usr/sbin/sshd -t -f %s
+  register: ssh_stat
+
+- name: Restart sshd service
+  systemd:
+    name: sshd
+    state: restarted
+  when: ssh_stat.changed
+
+- name: Copy file to /etc
+  copy:
+    src: login.defs
+    dest: /etc
+    owner: root
+    group: root
+  mode: 644
+
+- name: Encrypt grub
+  lineinfile:
+    path: /etc/grub.d/40_custom
+    line: 'password 768768CyTx'
+    create: yes
+
+- name: Install aide
+  yum: name=aide state=present
+

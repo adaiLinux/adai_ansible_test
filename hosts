@@ -1,0 +1,49 @@
+# 所有主机需要带上ansible_ssh_host，更新/etc/hosts使用
+# all分组的所有ansible_ssh_host非空的主机都会添加到/etc/hosts
+# local_etc_hosts为设置该ip在/etc/hosts中对应的域名,可以为空,默认为机器名
+# local_hostname设置该机器的hostname,可以为空,默认为机器名
+# 主机名必须匹配正则 \w+
+
+[all]
+host1 ansible_ssh_host=192.168.228.128 env=test local_etc_hosts='log_kafka_1'
+host2 ansible_ssh_host=192.168.228.129 env=test local_etc_hosts='log_kafka_2'
+host3 ansible_ssh_host=192.168.228.130 env=test local_etc_hosts='log_kafka_3'
+
+[mysqld]
+host2
+
+[ldap]
+host3
+
+[redmine]
+host3
+
+[nginx]
+host3
+# Ex 2: A collection of hosts belonging to the 'webservers' group
+
+## [webservers]
+## alpha.example.org
+## beta.example.org
+## 192.168.1.100
+## 192.168.1.110
+
+# If you have multiple hosts following a pattern you can specify
+# them like this:
+
+## www[001:006].example.com
+
+# Ex 3: A collection of database servers in the 'dbservers' group
+
+## [dbservers]
+## 
+## db01.intranet.mydomain.net
+## db02.intranet.mydomain.net
+## 10.25.1.56
+## 10.25.1.57
+
+# Here's another example of host ranges, this time there are no
+# leading 0s:
+
+## db-[99:101]-node.example.com
+

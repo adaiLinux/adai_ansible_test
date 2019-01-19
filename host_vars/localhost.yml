@@ -1,0 +1,3 @@
+---
+sudo: yes
+sudo_user: root
